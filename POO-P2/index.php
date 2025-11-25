@@ -41,6 +41,21 @@ class Lobby
     }
 }
 
+class QueuingPlayer extends Player
+{
+    private int $range = 1;
+
+    public function __construct(Player $p)
+    {
+        parent::__construct($p->getName(), $p->getRatio());
+    }
+
+    public function getRange(): int
+    {
+        return $this->range;
+    }
+}
+
 class Player
 {
     public function __construct(protected string $name, protected float $ratio = 400.0)
