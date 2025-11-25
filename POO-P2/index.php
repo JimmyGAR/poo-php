@@ -28,12 +28,12 @@ class Lobby
         });
     }
 
-    public function addPlayer(Player $player): void
+    public function addPlayer(AbstractPlayer $player): void
     {
         $this->queuingPlayers[] = new QueuingPlayer($player);
     }
 
-    public function addPlayers(Player ...$players): void
+    public function addPlayers(AbstractPlayer ...$players): void
     {
         foreach ($players as $player) {
             $this->addPlayer($player);
@@ -45,7 +45,7 @@ class QueuingPlayer extends Player
 {
     private int $range = 1;
 
-    public function __construct(Player $p)
+    public function __construct(AbstractPlayer $p)
     {
         parent::__construct($p->getName(), $p->getRatio());
     }
@@ -71,19 +71,32 @@ abstract class AbstractPlayer
     {
     }
 
-    private function probabilityAgainst(self $player): float
+    protected function probabilityAgainst(AbstractPlayer $player): float
     {
         return 1 / (1 + (10 ** (($player->getRatio() - $this->getRatio()) / 400)));
     }
 
-    final public function updateRatioAgainst(self $player, int $result): void
+    abstract public function updateRatioAgainst(AbstractPlayer $player, int $result): void;
+}
+
+class Player extends AbstractPlayer
+{
+    public function updateRatioAgainst(AbstractPlayer $player, int $result): void
     {
         $this->ratio += 32 * ($result - $this->probabilityAgainst($player));
     }
 }
 
-class Player extends AbstractPlayer
+class BlitzPlayer extends AbstractPlayer
 {
+    public function __construct(protected string $name, protected float $ratio = 1200.0)
+    {
+    }
+
+    public function updateRatioAgainst(AbstractPlayer $player, int $result): void
+    {
+        $this->ratio += 4 * (32 * ($result - $this->probabilityAgainst($player)));
+    }
 }
 
 $greg = new Player('greg', 400);
@@ -91,6 +104,12 @@ $jade = new Player('jade', 476);
 
 $lobby = new Lobby();
 $lobby->addPlayers($greg, $jade);
+
+$j1 = new BlitzPlayer('greg', 400);
+$j2 = new BlitzPlayer('jade', 476);
+
+$lobby = new Lobby();
+$lobby->addPlayers($j1, $j2);
 
 var_dump($lobby->findOponents($lobby->queuingPlayers[0]));
 
