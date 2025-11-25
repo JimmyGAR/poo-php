@@ -56,15 +56,19 @@ class QueuingPlayer extends Player
     }
 }
 
-class Player
+abstract class AbstractPlayer
 {
-    public function __construct(protected string $name, protected float $ratio = 400.0)
-    {
-    }
-
-    public function getName(): string
+    final public function getName(): string
     {
         return $this->name;
+    }
+    final public function getRatio(): float
+    {
+        return $this->ratio;
+    }
+
+    public function __construct(protected string $name, protected float $ratio = 400.0)
+    {
     }
 
     private function probabilityAgainst(self $player): float
@@ -72,15 +76,14 @@ class Player
         return 1 / (1 + (10 ** (($player->getRatio() - $this->getRatio()) / 400)));
     }
 
-    public function updateRatioAgainst(self $player, int $result): void
+    final public function updateRatioAgainst(self $player, int $result): void
     {
         $this->ratio += 32 * ($result - $this->probabilityAgainst($player));
     }
+}
 
-    public function getRatio(): float
-    {
-        return $this->ratio;
-    }
+class Player extends AbstractPlayer
+{
 }
 
 $greg = new Player('greg', 400);
