@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace App\MatchMaker\Lobby;
 
 use App\MatchMaker\Player\Player;
-use App\MatchMaker\QueuingPlayer\QueuingPlayer;
+use App\MatchMaker\Player\AbstractPlayer;
 
 class Lobby
 {
@@ -46,7 +46,25 @@ class Lobby
     }
 }
 
-namespace App\MatchMaker\AbstractPlayer;
+class QueuingPlayer extends Player
+{
+    public function __construct(AbstractPlayer $player, protected int $range = 1)
+    {
+        parent::__construct($player->getName(), $player->getRatio());
+    }
+
+    public function getRange(): int
+    {
+        return $this->range;
+    }
+
+    public function upgradeRange(): void
+    {
+        $this->range = min($this->range + 1, 40);
+    }
+}
+
+namespace App\MatchMaker\Player;
 abstract class AbstractPlayer
 {
     public function __construct(public string $name = 'anonymous', public float $ratio = 400.0)
@@ -61,10 +79,6 @@ abstract class AbstractPlayer
 
     abstract public function updateRatioAgainst(self $player, int $result): void;
 }
-
-namespace App\MatchMaker\Player;
-
-use App\MatchMaker\AbstractPlayer\AbstractPlayer;
 
 class Player extends AbstractPlayer
 {
@@ -88,34 +102,6 @@ class Player extends AbstractPlayer
         return $this->ratio;
     }
 }
-
-namespace App\MatchMaker\QueuingPlayer;
-
-use App\MatchMaker\AbstractPlayer\AbstractPlayer;
-use App\MatchMaker\Player\Player;
-
-class QueuingPlayer extends Player
-{
-    public function __construct(AbstractPlayer $player, protected int $range = 1)
-    {
-        parent::__construct($player->getName(), $player->getRatio());
-    }
-
-    public function getRange(): int
-    {
-        return $this->range;
-    }
-
-    public function upgradeRange(): void
-    {
-        $this->range = min($this->range + 1, 40);
-    }
-}
-
-namespace App\MatchMaker\BlitzPlayer;
-
-use App\MatchMaker\Player\Player;
-use App\MatchMaker\AbstractPlayer\AbstractPlayer;
 
 class BlitzPlayer extends Player
 {
