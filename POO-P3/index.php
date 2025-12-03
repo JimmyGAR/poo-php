@@ -11,6 +11,11 @@
 
 declare(strict_types=1);
 
+namespace App\MatchMaker\Lobby;
+
+use App\MatchMaker\Player\AbstractPlayer;
+use App\MatchMaker\Player\Player;
+
 class Lobby
 {
     /** @var array<QueuingPlayer> */
@@ -41,6 +46,26 @@ class Lobby
     }
 }
 
+class QueuingPlayer extends Player
+{
+    public function __construct(AbstractPlayer $player, protected int $range = 1)
+    {
+        parent::__construct($player->getName(), $player->getRatio());
+    }
+
+    public function getRange(): int
+    {
+        return $this->range;
+    }
+
+    public function upgradeRange(): void
+    {
+        $this->range = min($this->range + 1, 40);
+    }
+}
+
+
+namespace App\MatchMaker\Player;
 abstract class AbstractPlayer
 {
     public function __construct(public string $name = 'anonymous', public float $ratio = 400.0)
@@ -79,24 +104,6 @@ class Player extends AbstractPlayer
     }
 }
 
-class QueuingPlayer extends Player
-{
-    public function __construct(AbstractPlayer $player, protected int $range = 1)
-    {
-        parent::__construct($player->getName(), $player->getRatio());
-    }
-
-    public function getRange(): int
-    {
-        return $this->range;
-    }
-
-    public function upgradeRange(): void
-    {
-        $this->range = min($this->range + 1, 40);
-    }
-}
-
 class BlitzPlayer extends Player
 {
     public function __construct(public string $name = 'anonymous', public float $ratio = 1200.0)
@@ -112,6 +119,8 @@ class BlitzPlayer extends Player
 
 $greg = new BlitzPlayer('greg');
 $jade = new BlitzPlayer('jade');
+
+use App\MatchMaker\Lobby\Lobby;
 
 $lobby = new Lobby();
 $lobby->addPlayers($greg, $jade);
