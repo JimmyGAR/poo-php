@@ -4,15 +4,31 @@ declare(strict_types=1);
 
 namespace App\MatchMaker\Lobby;
 
-use App\MatchMaker\Player\AbstractPlayer;
-use App\MatchMaker\Player\Player;
-use App\MatchMaker\Lobby\QueuingPlayerInterface;
+use AbstractPlayer;
+use App\MatchMaker\Player\PlayerInterface;
+use App\MatchMaker\Lobby\InLobbyPlayerInterface;
 
-class QueuingPlayer extends Player implements QueuingPlayerInterface
+class QueuingPlayer implements InLobbyPlayerInterface
 {
-    public function __construct(AbstractPlayer $player, protected int $range = 1)
+    protected int $range = 1;
+
+    public function __construct(protected PlayerInterface $player)
     {
-        parent::__construct($player->getName(), $player->getRatio());
+    }
+
+    public function getName(): string
+    {
+        return $this->player->getName();
+    }
+
+    public function getRatio(): float
+    {
+        return $this->player->getRatio();
+    }
+
+    public function updateRatioAgainst(PlayerInterface $player, int $result): void
+    {
+        $this->player->updateRatioAgainst($player, $result);
     }
 
     public function getRange(): int

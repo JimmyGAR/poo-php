@@ -15,7 +15,7 @@ abstract class AbstractPlayer
 
     abstract public function getRatio(): float;
 
-    abstract protected function probabilityAgainst(self $player): float;
+    abstract protected function probabilityAgainst(PlayerInterface $player): float;
 
-    abstract public function updateRatioAgainst(self $player, int $result): void;
+    abstract public function updateRatioAgainst(PlayerInterface $player, int $result): void;
 }

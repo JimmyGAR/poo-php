@@ -8,5 +8,5 @@ interface PlayerInterface
 {
     public function getRatio();
     public function getName();
-    public function updateRatioAgainst(AbstractPlayer $player, int $result);
+    public function updateRatioAgainst(self $player, int $result);
 }
