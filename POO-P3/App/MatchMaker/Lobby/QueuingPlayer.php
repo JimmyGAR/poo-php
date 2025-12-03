@@ -6,8 +6,9 @@ namespace App\MatchMaker\Lobby;
 
 use App\MatchMaker\Player\AbstractPlayer;
 use App\MatchMaker\Player\Player;
+use App\MatchMaker\Lobby\QueuingPlayerInterface;
 
-class QueuingPlayer extends Player
+class QueuingPlayer extends Player implements QueuingPlayerInterface
 {
     public function __construct(AbstractPlayer $player, protected int $range = 1)
     {

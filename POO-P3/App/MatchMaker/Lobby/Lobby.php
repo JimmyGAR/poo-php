@@ -6,8 +6,9 @@ namespace App\MatchMaker\Lobby;
 
 use App\MatchMaker\Player\Player;
 use App\MatchMaker\Lobby\QueuingPlayer;
+use App\MatchMaker\Lobby\LobbyInterface;
 
-class Lobby
+class Lobby implements LobbyInterface
 {
     /** @var array<QueuingPlayer> */
     public array $queuingPlayers = [];
